@@ -1,0 +1,5 @@
+.DS_Store
+app/.build/
+app/KeyGlow.app/
+app/KeyGlow.zip
+firmware/*.bin

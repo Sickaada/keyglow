@@ -1,0 +1,20 @@
+diff --git a/keyboards/keychron/bluetooth/bluetooth.c b/keyboards/keychron/bluetooth/bluetooth.c
+index 481099a..90826fd 100644
+--- a/keyboards/keychron/bluetooth/bluetooth.c
++++ b/keyboards/keychron/bluetooth/bluetooth.c
+@@ -44,6 +44,7 @@ uint8_t                      bluetooth_report_protocol = true;
+ 
+ /* declarations */
+ uint8_t bluetooth_keyboard_leds(void);
++__attribute__((weak)) void bluetooth_hid_indicator_user(uint8_t leds) {}
+ void    bluetooth_send_keyboard(report_keyboard_t *report);
+ void    bluetooth_send_mouse(report_mouse_t *report);
+ void    bluetooth_send_extra(report_extra_t *report);
+@@ -428,6 +429,7 @@ void bluetooth_event_queue_task(void) {
+                 break;
+             case EVT_HID_INDICATOR:
+                 led_state = event.params.led;
++                bluetooth_hid_indicator_user(led_state); /* KeyGlow: see every LED frame, unmerged */
+                 break;
+             case EVT_HID_SET_PROTOCOL:
+                 bluetooth_hid_set_protocol(event.params.protocol);
