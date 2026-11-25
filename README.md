@@ -1,87 +1,102 @@
-# KeyGlow
+# KeyGlow · Keychron Lighting Studio
 
-**Wireless RGB lighting control for the Keychron K3 Pro, from your Mac's menu bar.**
+A native macOS menu-bar app for controlling a **Keychron K3 Pro ANSI RGB** over Bluetooth, with custom QMK firmware.
 
-<img src="docs/panel.png" width="340" alt="The KeyGlow menu bar panel: keyboard status light, the current look Ocean with its color, effect, brightness and speed controls, and a list of saved looks.">
+<img src="docs/panel.png" width="440" alt="Graphite Lighting Studio panel with a dark K3 Pro keyboard illuminated purple and cyan, color controls and brightness slider.">
 
-Keychron's VIA and Launcher can only change the lighting over the USB cable. KeyGlow does it **over Bluetooth**.
+## Lighting Studio
 
-## How it works (the hack)
+- An 84-key keyboard preview with dark keycaps and RGB under-light.
+- **Lighting:** color swatches, custom picker, HEX entry, recent colors, brightness and speed.
+- **Animations:** 26 supported effects with previews, including split, gradient, color fade and color wave using two or three colors.
+- **Presets:** save, apply, rename, update, duplicate, delete, favorite, import and export JSON.
+- **Create Animation:** a dedicated palette-effect editor with preview playback, undo/redo, region/color-stop selection, save and apply.
+- Diagnostics: flash white, show the keyboard's battery bar, inspect signal bits and adjust transport timing.
 
-Over Bluetooth, your Mac can send the keyboard exactly one thing: the on/off state of the lock lights (Num, Caps, Scroll, Compose, Kana). KeyGlow flips the four lights macOS never uses in a quick, encoded pattern. A small addition to the keyboard's open-source QMK firmware decodes the pattern into lighting commands. Your real Caps Lock state is never touched.
+<img src="docs/studio.png" width="920" alt="Animation Studio with a large keyboard canvas, palette properties and color sequence.">
 
-KeyGlow only **sends** these light signals. It never reads what you type. See [docs/PROTOCOL.md](docs/PROTOCOL.md) for the wire format.
+Previews show the **selected look**, not a readback from the keyboard. Motion and typing effects are approximate. The keyboard does not acknowledge applied settings. The app distinguishes waiting changes, sending, and completed host writes.
 
-## What you need
+## Requirements
 
-- A **Keychron K3 Pro, ANSI layout, RGB version** (USB ID `3434:0230`). Other keyboards won't work as-is.
-- A Mac running **macOS 14 Sonoma** or later (Apple silicon or Intel).
-- A USB-C **data** cable, for the one-time firmware install.
+- **Keychron K3 Pro, ANSI RGB**, USB ID `3434:0230`. Other variants are not supported as-is.
+- **macOS 14 or later.** The downloadable app is universal (Apple silicon and Intel).
+- A USB data cable for the one-time custom firmware installation. Normal lighting control is wireless.
 
-## Install
+## Install the app
 
-### 1. Flash the KeyGlow firmware (once, over USB)
+Download **KeyGlow.zip** from [Releases](https://github.com/Sickaada/keyglow/releases), unzip it and put **KeyGlow.app** in Applications. Open it, then click the **keyboard icon** in the menu bar.
 
-> ⚠️ Flashing replaces your keyboard's firmware. It's reversible (see *Going back* below), but you do it at your own risk. Your VIA key remaps and saved lighting reset to defaults.
+The app is ad-hoc signed, not Apple-notarized. macOS may require explicit approval in Privacy & Security before the first launch.
 
-1. Download `keychron_k3_pro_ansi_rgb_keyglow.bin` from the [latest release](../../releases/latest).
-2. Install the flashing tool: `brew install dfu-util`.
-3. Put the keyboard in flash mode:
-   - plug in the USB cable,
-   - slide the switch to **Off**,
-   - hold **Esc**, slide the switch to **Cable**, and keep holding Esc for 2 seconds.
+Grant **Input Monitoring to KeyGlow only** in System Settings → Privacy & Security. This is required by the current HID access path. KeyGlow sends output reports and does not register keystroke-input callbacks. Do not grant this permission to your terminal or AI agent on KeyGlow's behalf.
 
-   The keyboard stops typing and its lights stay off. If Esc doesn't work, use the reset button under the spacebar keycap instead.
-4. Flash it:
-   ```bash
+After a rebuild, macOS may require removing and re-adding KeyGlow in that list, then quitting and reopening it. Open only one copy of the app. A development build (`local.keyglow`) and public build (`io.github.sickaada.keyglow`) use separate preferences and permissions.
+
+Saving presets and editing previews work offline. Applying lighting requires the keyboard connection and app permission.
+
+## Firmware setup
+
+The app requires the KeyGlow firmware for **this exact keyboard variant**. Palette effects 22–25 require the firmware included with the Lighting Studio release; older firmware may ignore them.
+
+Flashing replaces the keyboard program and can reset saved key mappings or settings. Export important VIA mappings first, use a reliable cable, and retain a compatible recovery image. Recovery is normally possible through the chip's DFU bootloader, but is not a guarantee against every hardware or flashing failure.
+
+1. Download the matching `keychron_k3_pro_ansi_rgb_keyglow.bin` from the release.
+2. Install `dfu-util`: `brew install dfu-util`.
+3. Connect USB. Switch **Off**, hold **Esc**, switch to **Cable**, then release Esc after two seconds. In DFU mode the keyboard will not type.
+4. Check that DFU sees the intended keyboard:
+   ```sh
+   dfu-util -l
+   ```
+5. With the correct device connected, flash:
+   ```sh
    dfu-util -d 0483:df11 -a 0 -s 0x08000000:leave -D keychron_k3_pro_ansi_rgb_keyglow.bin
    ```
-5. The keyboard restarts on its own. Unplug it, slide the switch to **Bluetooth**, and re-pair if needed.
+6. Switch back to Bluetooth and reconnect. Do not unplug during flashing.
 
-You can also use [QMK Toolbox](https://github.com/qmk/qmk_toolbox) instead of `dfu-util`.
+To restore, use the appropriate official Keychron firmware or the separately identified source-built stock VIA recovery image. A source-built stock image is not a dump of your keyboard's original firmware.
 
-### 2. Install the app
+## Everyday use
 
-1. Download `KeyGlow.zip` from the [latest release](../../releases/latest), unzip it, and move **KeyGlow** to Applications.
-2. Open it. KeyGlow isn't notarized by Apple yet, so macOS will block it the first time. Go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**.
-3. Click the beacon icon in the menu bar. KeyGlow asks for **Input Monitoring**. That's macOS's name for any app that talks directly to a keyboard. Turn it on for KeyGlow, then quit and reopen KeyGlow.
+- Choose a color or effect; previews update immediately and commands are queued.
+- One command takes roughly two seconds with the default transport timing. A complete palette can require several commands.
+- In **Presets**, choose **Save current**, enter a name in the inline form and press **Save**.
+- For palette effects, choose two or three colors. The larger editor supports the same existing effects; it does not upload arbitrary frame sequences.
+- Brightness below 48/255 (about 19%) turns the lighting off on battery.
+- The **gear** opens diagnostics. Battery level is displayed on the keyboard, not as an invented percentage in the app.
 
-## Use it
+## How the Bluetooth hack works
 
-- **Status light** (top right): **red · Sending** while a change is on its way, **green · Sent** once it lands, **amber · Needs attention** when something needs you.
-- **Color strip**: click it to pick any color.
-- **Lights, Effect, Brightness, Speed**: 22 effects, brightness and animation speed.
-- **Saved looks**: click one (or press **1–4**) to apply it. If you tweak it, an **Edited** tag appears; click **Update look** to keep the change, or right-click any saved look to save the current look there.
-- Each change takes about 2 seconds to reach the keyboard. That's the cost of sending data through lock lights.
-- In wireless mode, a brightness below 48 turns the lights off. That's the keyboard's own power saving.
+The Mac sends standard HID lock-light reports. Four LED bits carry a clock and data; Caps Lock's current state is preserved. The custom firmware decodes short packets into lighting commands and runs effects locally. See [the protocol](docs/PROTOCOL.md).
 
-**Diagnostics** (stethoscope icon): flash the keyboard white, or turn on *Signal view* (also **Fn + V** on the keyboard). Keys 1–5 then light up for each raw signal as it arrives.
+The transport is intentionally separate from the SwiftUI interface. It sends no per-frame RGB stream and reads no typed keys.
 
-## Going back to stock firmware
+## Build
 
-Download `keychron_k3_pro_ansi_rgb_STOCK_via.bin` from the release (Keychron's unmodified VIA firmware, built from the same source), or get the official firmware from Keychron's website. Then flash it the same way as above.
+With Xcode command-line tools installed:
 
-## Build from source
-
-```bash
-# App (needs Xcode command line tools)
-app/build.sh            # add --zip for a release zip
-
-# Firmware (needs: brew install --cask gcc-arm-embedded)
-firmware/build.sh       # clones Keychron's QMK fork at a pinned commit, applies the patch, builds
+```sh
+./app/build.sh --zip
+./app/KeyGlow.app/Contents/MacOS/KeyGlow --self-test
 ```
 
-The firmware is a QMK keymap ([firmware/keymap](firmware/keymap)) plus a two-line hook in Keychron's Bluetooth code ([firmware/patches](firmware/patches)). The hook lets the keymap see every lock-light report, even when several arrive at once.
+The build creates `app/KeyGlow.app` and optionally `app/KeyGlow.zip`; binaries are not committed. Local checks cover keyboard geometry, preset storage and import validation, HEX parsing, and pending-submission state. They do not prove physical keyboard outcomes.
 
-## Known limits
+For firmware, install Python 3 and the Arm GNU toolchain, then run:
 
-- Only the K3 Pro ANSI RGB is supported. Other Keychron Pro boards could likely be added the same way (PRs welcome).
-- The app can't read back the keyboard's state. It shows what it last sent.
-- It can't show the battery percentage on your Mac: the keyboard doesn't report it over Bluetooth. Instead, **Show battery** makes the keyboard light its own battery bar (same as Fn+B). This only works on battery, not while the cable is plugged in.
-- Bluetooth only. Over the cable, use VIA.
+```sh
+brew install --cask gcc-arm-embedded
+./firmware/build.sh
+```
+
+The firmware builder uses Keychron's QMK fork pinned to commit `618127a725a1773e85f13455602cf6f72ab4de17`, the keymap in `firmware/keymap`, and the Bluetooth hook patch in `firmware/patches`. Its work path must not contain spaces. The script builds only; it does not flash a device.
+
+## Scope and limits
+
+Per-key painting, arbitrary timeline keyframes and composited layers are not implemented by the existing protocol. Their [engine requirements](docs/ANIMATION-ENGINE-REQUIREMENTS.md) are documented separately. UI controls for unsupported features are not presented as working features.
+
+Keyboard previews are capped at 30 FPS, honor Reduce Motion and pause when hidden. Effect-card motion is limited to hovered/selected cards; preset thumbnails are static. The source-built release is experimental and should be tested on the exact supported board.
 
 ## License
 
-The app is MIT ([LICENSE](LICENSE)). The firmware is GPL-2.0-or-later, like QMK ([firmware/LICENSE](firmware/LICENSE)).
-
-Not affiliated with Keychron.
+The app is [MIT](LICENSE). The firmware is [GPL-2.0-or-later](firmware/LICENSE), following QMK and Keychron's fork. Not affiliated with Keychron.

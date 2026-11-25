@@ -10,7 +10,7 @@ BIN="$APP/Contents/MacOS/KeyGlow"
 rm -rf "$APP" .build && mkdir -p "$APP/Contents/MacOS" .build
 
 for arch in arm64 x86_64; do
-  swiftc -O -parse-as-library -target "$arch-apple-macos14.0" KeyGlow.swift Panel.swift -o ".build/KeyGlow-$arch"
+  swiftc -O -parse-as-library -target "$arch-apple-macos14.0" KeyGlow.swift Models.swift Library.swift Theme.swift Controls.swift Panel.swift Studio.swift KeyboardPreview.swift App.swift -o ".build/KeyGlow-$arch"
 done
 lipo -create .build/KeyGlow-arm64 .build/KeyGlow-x86_64 -output "$BIN"
 
@@ -24,8 +24,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
     <key>CFBundleDisplayName</key><string>KeyGlow</string>
     <key>CFBundleExecutable</key><string>KeyGlow</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleShortVersionString</key><string>0.2.0</string>
-    <key>CFBundleVersion</key><string>2</string>
+    <key>CFBundleShortVersionString</key><string>0.3.0</string>
+    <key>CFBundleVersion</key><string>3</string>
     <key>LSMinimumSystemVersion</key><string>14.0</string>
     <key>LSUIElement</key><true/>
     <key>NSHighResolutionCapable</key><true/>

@@ -1,10 +1,3 @@
-/* KeyGlow: lighting commands over the HID lock-light report.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- */
 /* KeyGlow: receive lighting commands from the Mac through the lock-light (LED) report.
  *
  * Wire format (one HID LED output report = one "frame"):
@@ -37,6 +30,8 @@ enum keyglow_cmd {
     KG_CMD_VIEW   = 5, /* a = 0 hide, 1 show signal view */
     KG_CMD_PING   = 6, /* flashes the whole board white once */
     KG_CMD_BATTERY = 7, /* plays Keychron's battery-level bar (same as Fn+B) */
+    KG_CMD_COLOR2  = 8, /* a = hue, b = saturation of color 2 (multi-color effects) */
+    KG_CMD_COLOR3  = 9, /* a = hue, b = saturation of color 3; c = 1 use three colors, 0 use two */
 };
 
 void keyglow_frame(uint8_t leds);

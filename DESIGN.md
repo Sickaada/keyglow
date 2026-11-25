@@ -1,234 +1,225 @@
 ---
-name: KeyGlow
-description: A stage manager's cue sheet for one keyboard's lights, living in the macOS menu bar.
+name: Keychron Lighting Studio
+description: Native graphite lighting controls around a black K3 Pro and its emitted light.
 colors:
-  running-blue: "#16205a"
-  raised-blue: "#1e2b70"
-  rule-blue: "#2f3c86"
-  lift-blue: "#6b80e2"
-  paper: "#eef1f7"
-  dim-paper: "#a3acd9"
-  standby-red: "#e5484d"
-  go-green: "#30a46c"
-  attention-amber: "#f5b83d"
+  background: "#141518"
+  surface: "#1c1d21"
+  elevated: "#25262b"
+  border: "#303137"
+  text: "#f5f5f7"
+  secondary: "#a3a3ac"
+  control-tint: "rgba(255,255,255,0.88)"
+  selection-edge: "rgba(255,255,255,0.65)"
+  swatch-edge: "rgba(255,255,255,0.25)"
+  cap-top: "rgb(10.5% 10.8% 12%)"
+  cap-bottom: "rgb(5.5% 5.8% 6.5%)"
+  legend-off: "rgb(45% 47% 55%)"
 typography:
-  cue-number:
-    fontFamily: "SF Mono, ui-monospace, Menlo, monospace"
-    fontSize: "26pt"
-    fontWeight: 600
-  title:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
+  panel-title:
+    fontFamily: "SF Pro"
     fontSize: "15pt"
     fontWeight: 600
+  editor-title:
+    fontFamily: "SF Pro"
+    fontWeight: 600
   headline:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
-    fontSize: "13pt"
-    fontWeight: 700
+    fontFamily: "SF Pro"
   body:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
-    fontSize: "13pt"
-    fontWeight: 400
+    fontFamily: "SF Pro"
   callout:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
-    fontSize: "12pt"
-    fontWeight: 400
-  meta:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
-    fontSize: "11pt"
-    fontWeight: 400
-    fontFeature: "tnum"
-  label:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
-    fontSize: "11pt"
+    fontFamily: "SF Pro"
+  card-label:
+    fontFamily: "SF Pro"
     fontWeight: 500
-    letterSpacing: "0.8pt"
-  figures:
-    fontFamily: "SF Mono, ui-monospace, Menlo, monospace"
-    fontSize: "12pt"
-    fontWeight: 400
-  badge:
-    fontFamily: "SF Pro, -apple-system, system-ui, sans-serif"
-    fontSize: "10pt"
-    fontWeight: 700
-    letterSpacing: "0.8pt"
+  caption:
+    fontFamily: "SF Pro"
+  hex:
+    fontFamily: "SF Mono"
 rounded:
-  swatch: "3px"
-  well: "6px"
+  studio: "12pt"
 spacing:
-  hair: "2px"
-  xs: "8px"
-  sm: "10px"
-  md: "12px"
-  lg: "16px"
+  tight: "2pt"
+  inline: "8pt"
+  control: "10pt"
+  inset: "12pt"
+  section: "16pt"
+  panel: "20pt"
+  canvas: "24pt"
 components:
   panel:
-    backgroundColor: "{colors.running-blue}"
-    textColor: "{colors.paper}"
-    width: "340px"
-  cue-row:
-    textColor: "{colors.paper}"
-    typography: "{typography.body}"
-    rounded: "{rounded.well}"
-    padding: "6px 8px"
-  cue-row-current:
-    backgroundColor: "{colors.raised-blue}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.well}"
-    padding: "6px 8px"
-  gel-chip:
-    rounded: "{rounded.well}"
-    height: "46px"
-    typography: "{typography.figures}"
-  row-label:
-    textColor: "{colors.dim-paper}"
-    typography: "{typography.label}"
-    width: "60px"
-  off-cue-badge:
-    backgroundColor: "{colors.dim-paper}"
-    textColor: "{colors.running-blue}"
-    typography: "{typography.badge}"
-    rounded: "{rounded.swatch}"
-    padding: "2px 5px"
-  cue-lamp:
-    size: "10px"
-    typography: "{typography.label}"
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.text}"
+    width: "440pt"
+  studio-button:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.studio}"
+  studio-button-selected:
+    backgroundColor: "{colors.elevated}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.studio}"
+  effect-card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.studio}"
+    padding: "12pt"
+  preset-edit-form:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.studio}"
+    padding: "12pt"
+  preset-card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.studio}"
+  palette-slot:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.studio}"
+    padding: "7pt 9pt"
+  hex-field:
+    typography: "{typography.hex}"
+    width: "88pt"
+  navigation:
+    textColor: "{colors.text}"
+  color-swatch:
+    size: "21pt"
+  diagnostics-popover:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.text}"
+    width: "400pt"
+    height: "370pt"
+    padding: "20pt"
+  status-footer:
+    textColor: "{colors.secondary}"
+    typography: "{typography.caption}"
+    padding: "12pt 20pt"
+  keyboard-preview:
+    backgroundColor: "{colors.cap-top}"
 ---
 
-# Design System: KeyGlow
+# Design System: Keychron Lighting Studio
 
 ## Overview
 
-**Creative North Star: "The Cue Sheet"**
+**Creative North Star: "Keychron Lighting Studio"**
 
-KeyGlow is a stage manager's running sheet in a 340 pt menu bar window. Every lighting look is a numbered cue (Q1, Q2...), and every send is a stage call: the lamp goes red for standby while the signal travels, then green for go when it lands. The shell is the deep blue of a backstage running light, the text is cool paper-white, and the only saturated color on screen is either the gel (the keyboard's own color) or the cue lamp telling you where the call stands.
+Keychron Lighting Studio is a quiet native macOS utility centered on the black K3 Pro keyboard and its emitted light. Graphite surfaces, SF Pro, restrained native material, and familiar controls support the hardware visualization. This explicitly replaces the former Cue Sheet identity.
 
-Density is calm and compact: one column, hairline-ruled bands, standard native controls tinted into the world rather than replaced. Numbers are always set in monospaced figures so values sit in fixed columns like a cue sheet. Inside lists, rank comes from weight and brightness, never from size. The panel is honest about latency and state: it shows what was last sent and whether it arrived, and never pretends to read the keyboard back.
-
-It refuses the category default of a grey Control Center tile grid.
+The menu panel supports quick adjustments and a visual effects/preset library. The separate editor gives existing palette effects more room without implying per-key painting, timeline keyframes, layers, or hardware readback. RGB communicates the selected lighting; neutral controls stay legible around it.
 
 **Key Characteristics:**
-- Single dark running-light shell (#16205a family), forced dark appearance.
-- Cue lamp as the one live signal: red standby, green go, amber check, dim idle.
-- SF Pro for words, SF Mono for every number.
-- Uppercase tracked micro-labels for control rows and the cue list heading.
-- Hairline rules in lifted blue divide the panel into bands; no cards, no shadows on surfaces.
-- Native macOS controls (switch, menu picker, small sliders) tinted with lift blue.
+- Graphite shell with native ultra-thin material in the menu panel.
+- Black keycaps, illuminated legends, inter-key emission, and soft under-light.
+- Native SF Pro hierarchy and SF Symbols, including the keyboard header icon.
+- Shared rounded selection controls and two-column visual libraries.
+- Explicit approximate-preview, waiting-to-apply, sending, and failure language; motion respects visibility and Reduce Motion.
+
+Evidence: `mac/KeyGlow/Theme.swift`, `Panel.swift`, `Controls.swift`, `Studio.swift`, and `KeyboardPreview.swift`, with submission-state behavior checked in `Models.swift`; direction in `.impeccable/surfaces/mac-keyglow-panel-swift.md`; capability context in `PRODUCT.md` and `docs/STUDIO-AUDIT.md`. The initial pass inspected `lighting.png` and `studio.png` under `.impeccable/review/studio/` as offline fixtures, not hardware validation. The preset-form refresh checks current `Panel.swift` and `.impeccable/review/studio/save-preset.png`, an offline fixture showing the inline name form and disabled empty-name Save state. Rename, delete confirmation, and saved-notice behavior are documented from source; installation and interactive save success are not verified here. Current PRODUCT.md identifies macOS 14+ and 26 effects. The replacement is explicitly authorized; the prior design is backed up at `.keyglow-backup/pre-studio/DESIGN.md`.
 
 ## Colors
 
-A single deep-blue world with paper text and three cue-light signal colors that only ever mean state.
+Graphite neutrals frame freely chosen keyboard light. Frontmatter colors are the code values, not sampled composites from translucent screenshots.
 
 ### Primary
-- **Running-Light Blue** (running-blue): the whole panel ground. Every surface sits on it; nothing in the panel is lighter-backgrounded except the selected cue row and the gel.
-- **Lift Blue** (lift-blue): the tint for native controls (switch track, slider fill, focus). The only blue that reads as interactive.
-
-### Secondary
-- **Standby Red** (standby-red): cue lamp while a command is in flight. Pulses gently unless Reduce Motion is on.
-- **Go Green** (go-green): cue lamp for about 4 seconds after a send lands, then the lamp returns to idle.
-- **Attention Amber** (attention-amber): lamp state "Check" when the keyboard isn't ready or a send failed; also the text color for warnings (low-level power-saving note, send errors, failed footer status).
+- **Control tint:** translucent white applied through SwiftUI tint to native controls.
+- **Selected lighting:** dynamic cue colors, not a fixed brand accent. Swatches and previews reflect effect content.
 
 ### Neutral
-- **Cue Paper** (paper): primary text, cue numbers, current-row values. Non-current cue rows use it at 82% opacity.
-- **Dim Paper** (dim-paper): a blue-tinted secondary text (about 6.7:1 on the shell) for device line, meta line, row labels, help copy, footer, idle lamp word, and the OFF CUE badge fill.
-- **Raised Blue** (raised-blue): fill of the current cue row; at 50% it is the hover fill for other rows.
-- **Rule Blue** (rule-blue): 1 px hairlines between bands, and the unlit (idle) cue lamp.
+- **Background:** root panel backing and editor canvas.
+- **Surface / elevated:** resting and selected StudioButton fills; preset cards retain the surface fill when selected.
+- **Border:** quiet header, footer, and editor dividers.
+- **Text / secondary:** main labels and subdued metadata, help, and readouts.
+- **Selection edge:** selected cards, palette slots, and editor zone outlines.
+- **Swatch edge:** fine white boundary around color circles.
+- **Cap top / bottom / legend off:** the keyboard's unlit base materials; effect math introduces only a small tint into cap faces.
 
-### Named Rules
-**The Signal Colors Mean State Rule.** Red, green, and amber appear only as cue-lamp states and their matching state text. They are never decoration, never brand accents, never used on controls.
+Connection uses native green or gray; validation and low-brightness messages use native orange. These platform colors are not fixed hexadecimal brand tokens.
 
-**The Gel Is the Keyboard's Color Rule.** The only free hue in the panel is the gel chip and the cue swatches, which show the keyboard's own color. The UI chrome stays inside the blue family.
+**The Light Belongs to the Keyboard Rule.** Keep the shell graphite and controls neutral; use free RGB for lighting previews and palette selections. Native connection and warning colors remain valid semantic exceptions.
 
 ## Typography
 
-**Body Font:** SF Pro (system)
-**Figures Font:** SF Mono (system monospaced design)
+**Interface font:** SF Pro through SwiftUI system styles. **HEX font:** system monospaced design (SF Mono). There is no separate decorative display face.
 
-**Character:** Plain system text for words, a monospaced voice for every number so values line up in fixed columns the way a cue sheet does. Built on SwiftUI's macOS text styles, so sizes track the system.
+The explicit panel title is the frontmatter `panel-title`. The editor name uses `.title3.weight(.semibold)`; section headings use `.headline`; effect names and card labels use `.callout.weight(.medium)`; field labels use body/callout; status, helper copy, metadata, and palette slots use `.caption`. Semantic point sizes and line heights are left to macOS rather than invented as fixed tokens. Percentage readouts use callout with monospaced digits; diagnostics use caption with monospaced digits; HEX fields use monospaced callout and sequence HEX uses monospaced caption. Text uses normal case, except the functional HEX acronym and hardware legends.
 
-### Hierarchy
-- **Cue number** (SF Mono semibold, largeTitle 26pt): the current cue's Q-number. Dims to dim-paper when the live look is off cue.
-- **Title** (semibold, title3 15pt): current cue name, and the headline of each not-ready state.
-- **Headline** (bold, 13pt): the device name in the header.
-- **Body** (regular / semibold, 13pt): cue names in the cue list.
-- **Callout** (regular, 12pt): explanatory and error copy in not-ready and failed states.
-- **Meta** (regular, subheadline 11pt, monospaced digits): device line, current-cue meta line, effect names in the cue list, footer status, help text.
-- **Label** (medium, 11pt, 0.8pt tracking, uppercase): control row labels (LIGHTS, EFFECT, LEVEL, SPEED, FRAME GAP), the CUES list heading, and the cue lamp's state word (semibold).
-- **Figures** (SF Mono regular, callout 12pt): slider readouts, cue-list levels, cue numbers in rows, the gel's H/S readout (semibold, subheadline).
-- **Badge** (bold, caption2 10pt, 0.8pt tracking, uppercase): the OFF CUE badge only.
-
-### Named Rules
-**The Every Number Is Mono Rule.** Any numeric value the user reads (cue numbers, levels, speeds, hue/saturation, frame gap) is set in SF Mono or with monospaced digits, right-aligned in a fixed-width column when it sits in a row.
-
-**The Rank by Weight Rule.** Inside the cue list, the current cue is distinguished by semibold weight, full paper brightness, and the raised fill. Never by a larger size.
+**The Native Type Rule.** Use SF Pro semantic styles for native interface text, monospaced digits for numeric readouts, and monospaced text for HEX. Do not inherit Cue Sheet uppercase tracking or an every-number-is-SF-Mono rule.
 
 ## Layout
 
-A single fixed-width column (340 pt) of full-bleed bands, top to bottom: header (device line + cue lamp), current cue block (or the not-ready block), controls, cue list, optional diagnostics, footer. Bands are separated by 1 px rule-blue hairlines that run edge to edge.
+The menu panel is fixed at 440 pt. Header and horizontal content insets are 20 pt; preview/tab band has 16 pt vertical padding and 12 pt internal gaps. The header contains a 24 pt light-weight keyboard SF Symbol, title, connection line with a 5 pt status dot, power switch, and settings action. The preview leads into Lighting / Animations / Presets segmented navigation; contextual content scrolls above a persistent footer.
 
-- **Insets:** 16 pt horizontal inset for header, cue block, controls, diagnostics, and footer. The cue list uses an 8 pt band inset plus 8 pt row padding so its selection fill can extend wider than the text column while text stays aligned at 16 pt.
-- **Vertical rhythm:** 12 pt band padding for header, controls, and cue list; 16 pt for the cue block, not-ready block, and diagnostics; 10 pt for the footer. Control rows are spaced 10 pt apart with a 24 pt minimum height; cue rows sit 2 pt apart.
-- **Label column:** control rows use a fixed 60 pt label column so every control starts on the same vertical line.
-- **Figure columns:** slider readouts and cue-list levels sit in a 30 pt right-aligned column; the current cue number holds a 58 pt column.
-- **Disabled bands:** when the keyboard isn't ready, the controls and cue list stay visible at 45% opacity and the cue block is replaced by a plain-language explanation of what's missing.
+Lighting scroll height follows measured content clamped to 170–340 pt. Libraries use a 306 pt viewport and two flexible columns with 10 pt gaps. Effect cards have 12 pt padding; preset card content also has 12 pt padding. The footer uses 20 pt horizontal and 12 pt vertical insets. Settings opens a separate 400 × 370 pt scrolling popover anchored to the gear button with a top arrow edge and 20 pt content padding; diagnostics no longer occupies the tab content area. The build mixes 2, 8, 10, 12, 16, 20, and 24 pt spacing; it does not implement a strict 8-point grid despite the direction's shorthand.
+
+The editor has a minimum and ideal size of 920 × 640 pt, an expanding preview pane with 24 pt padding, a 320 pt scrolling properties pane with 20 pt padding, and a full-width color sequence/region strip. It grows with the window; no responsive breakpoint system is implemented.
+
+Palette presets use 13 columns in the panel and 8 in the compact editor, with 2 pt column gaps and 6 pt row gaps. Slider rows have an 18 pt icon column, 66 pt label column, flexible slider, and 34 pt trailing percentage column, separated by 10 pt gaps.
 
 ## Elevation & Depth
 
-Flat. Depth is tonal: the shell is one blue, the current row is one step lighter (raised-blue), and hairline rules do the structuring. There are no surface shadows.
+The panel places `.ultraThinMaterial` over the graphite backing and forces dark appearance. The editor uses the opaque graphite background. Actual native material and control rendering depends on the operating system; no fixed blur radius is asserted. Cards use tonal fills and selected outlines rather than custom drop shadows.
 
-The only shadows are light, not elevation: the cue lamp's glow (a colored blur matched to the lamp state, 4 pt at rest, breathing to 7 pt while on standby), and a small dark text shadow (black 45%, 2 pt blur, 1 pt down) that keeps white figures legible on any gel color.
+The Canvas keyboard has an aluminum frame gradient, fine highlighted edges, dark cap gradients, blurred emission between keys, and a diffuse light pool underneath. With `u = preview width / 17.12`, inter-key emission blur is `0.22u`; under-light blur is `0.9u` with 0.75 pool opacity. These are light effects, not generic card elevations.
 
-### Named Rules
-**The Light, Not Lift Rule.** A shadow in KeyGlow is always emitted light (the lamp's glow) or a legibility halo on the gel. Nothing is lifted off the shell with a drop shadow.
+**The Emitted Light Rule.** Keep keycaps black while light appears between keys, through legends, and beneath the keyboard. Surface hierarchy comes from graphite tones, thin boundaries, and native material.
 
 ## Shapes
 
-Two small radii and hairline edges. Swatches and the OFF CUE badge use 3 pt corners; the gel chip and cue-row selection fill use 6 pt. Color surfaces (gel, swatches, lamp) carry a thin white edge (22–25% opacity, 0.5–1 pt) so black or near-shell colors stay visible against the blue. The cue lamp is the only circle.
+StudioButton, effect cards, preset cards, and color slots share the 12 pt corner radius. Selected StudioButtons use elevated fill and a 1 pt selection edge; preset selection uses that edge while retaining surface fill. Swatches are circles: 21 pt presets and 15 pt recent colors, 3 pt padding, a 0.5 pt inner edge, and a 1.5 pt white selection ring. Native fields, pickers, switches, and segmented controls retain platform geometry.
+
+Keyboard geometry scales with `u`: frame radius 0.38u, cap radius 0.14u, key gaps 0.1u. The 84-key layout has six rows and a 16-unit key field; full aspect ratio is 17.12 / 7.42. Active Split/Gradient zones have a 1 pt dashed selection outline with a 4/3 pt dash pattern. Small card previews omit legends.
 
 ## Components
 
-### Cue Lamp (signature)
-The panel's one live signal, top right. A 10 pt filled circle with a 0.5 pt white edge, followed by an uppercase tracked state word in semibold label type.
-- **Idle:** rule-blue circle, no glow, word "IDLE" in dim-paper.
-- **Standby:** standby-red with a glow that breathes (ease-in-out, 0.6 s, repeating) while a command is in flight; static under Reduce Motion.
-- **Go:** go-green with a steady glow for about 4 s after a send lands.
-- **Check:** attention-amber when the keyboard is missing, permission is off, the cable is in use, or the last send failed.
-- State changes cross-fade over 0.35 s ease-out. Reads to VoiceOver as one element: "Keyboard link: [state]".
+### Buttons and selection slots
 
-### Gel Chip
-A full-width 46 pt color well showing the live color, its opacity scaled by level (35% at zero up to 100% at 255); pure black when lights are off. H and S readouts in semibold mono white, bottom left; a palette symbol top right. Clicking opens the system color panel, which sends when the pick settles.
+StudioButton is a quiet rounded surface with a neutral selected edge. Pressing reduces opacity to 0.75. Palette slot buttons combine a 10 pt color dot and caption label. Editor sequence buttons use 12 pt padding and a 12 pt dot. Standard toolbar buttons use native styles; Apply to keyboard is native bordered-prominent and disabled when connection requirements are unmet. Borderless icon actions use SF Symbols and accessibility labels. No custom hover tint or focus geometry is defined for StudioButton; retain native keyboard focus behavior.
 
-### Current Cue Block
-Large mono Q-number in a 58 pt column, then the cue name (title) with a mono-digit meta line beneath ("Breathing · level 200 · speed 128"). When the live look differs from the recorded cue, the Q-number dims, an OFF CUE badge appears beside the name, and a "Record to Q#" small button is offered.
+### Inputs and color controls
 
-### Cue Row
-- **Shape:** 6 pt rounded selection fill, 6 × 8 pt padding.
-- **Content:** mono Q-number (28 pt column), 14 pt swatch, cue name, effect name in dim meta type, mono level in a 30 pt right-aligned column.
-- **Current:** raised-blue fill, semibold number and name, paper text.
-- **Other rows:** paper at 82% opacity, no fill; hover adds raised-blue at 50%.
-- **Behavior:** click recalls and sends the cue; number keys 1–4 recall directly; context menu records the current look into that cue.
+Native menu pickers, sliders, switch, and ColorPicker carry the shared neutral tint. HEX uses a native rounded-border field with an 88 pt width, explicit apply action, and inline orange validation. The editor name is a plain title3 text field. Circular preset/recent swatches and named two/three-color slots expose palette editing; effects that own their colors show explanatory text instead. Speed is conditional on animation. Brightness and speed are displayed as percentages over the underlying 0–255 values. The HEX input and editor sequence HEX labels both represent RGB at the current global brightness; applying HEX updates that brightness for the whole keyboard. Palette/recent swatches continue to represent hue/saturation rather than a darkened brightness sample.
 
-### Control Rows
-Uppercase tracked dim label in a 60 pt column, then a standard macOS control: small switch for Lights, a menu picker for Effect, small sliders for Level and Speed with mono readouts. Controls take the lift-blue tint; they are not restyled.
+### Navigation and libraries
 
-### Buttons
-Native macOS buttons only. Small control size for in-flow actions ("Record to Q#", "Send again"); borderless buttons in the footer (diagnostics symbol, Quit); toggle-style buttons for diagnostic bits.
+The panel uses one native segmented control for Lighting, Animations, and Presets. Effect cards pair a miniature keyboard with the effect name and a selected checkmark. Selected or hovered effect cards animate only when the panel is active; hover does not introduce a new chrome color. Preset cards contain a static miniature, name, effect, favorite action, and management menu. Current presets receive an outline only when the current look is unedited; this indicates local selection, not hardware confirmation. Deleting a preset also removes its favorite membership. Empty libraries use an SF Symbol, headline, and short explanation.
 
-### Footer
-Dim meta status on the left ("Ready", "Sending · n left", "Last send failed" in amber), borderless diagnostics symbol and Quit on the right.
+### Inline preset forms
+
+Save current opens a form immediately below the Presets toolbar and above the cards. Rename uses the same form, prefilled with the preset name and headed “Rename preset” instead of “Name this preset.” The form uses the existing surface fill, 12 pt radius and padding, and 10 pt vertical spacing. Its title is medium callout; the name input is a native rounded-border TextField that requests focus on appearance and submits on Return. The bottom row pairs secondary caption “Saved on this Mac” with small native Cancel and bordered-prominent Save buttons. Save is disabled for a whitespace-only name; Cancel closes the form without saving.
+
+Delete opens an inline confirmation row above the cards with the preset name, Cancel, and a native destructive Delete action, using the same surface, radius, and padding. These preset actions do not use modal alerts. This is a Presets interaction pattern, not a ban on native dialogs elsewhere.
+
+After save or rename, the form closes and a secondary caption notice, `Saved “<name>”.`, appears above the cards. Creating a preset clears the favorites-only filter so the saved item remains available in the list. Notice placement also applies to import/export feedback. The form and confirmation remain inside the existing scrolling library viewport; they do not increase the panel width or create a separate overlay.
+
+### Keyboard preview and editor
+
+The same Canvas drawing appears at panel, miniature, and editor scales. Its black caps and emitted light are the signature component. Preview motion uses a 30 fps maximum scheduling rate and pauses for inactive/hidden views, static effects, fixed-time fixtures, and Reduce Motion. Tab changes use ease-in-out over 0.18 seconds unless Reduce Motion is enabled. The editor supports Split zones, Gradient, Color fade, and Color wave with palette, brightness, and applicable speed controls; zone selection is available for Split/Gradient. Play/pause, undo/redo, save, and explicit apply are native actions. The editor shares a selected color slot across properties, the sequence strip, and applicable keyboard regions; reducing color count clamps that shared selection. A new editor draft starts with lighting enabled and raises brightness below 48/255 to 200/255 so an off or dim source look does not produce a blank editing preview. This changes the local draft, not the keyboard until Apply.
+
+### Settings popover
+
+Diagnostics lives in the anchored, dark graphite popover. It retains native actions and controls, a headline with Close, caption help, and orange wrapped send-error detail. Hardware actions remain disabled when readiness requirements are unmet. The popover reuses existing typography, spacing, and colors rather than creating a separate visual theme.
+
+### Status
+
+Use the keyboard SF Symbol in the device header and native progress/status symbols in the footer. The connection dot indicates discovery, not proof of permission or Bluetooth readiness. The panel caption explicitly reads “Effect preview · Approximate.” Footer copy distinguishes missing device, Input Monitoring permission, non-Bluetooth transport, sending with remaining count, failure, ready, waiting-to-apply, and commands sent. Controls and preview show the selected look; newer edits can differ from the look associated with the last successfully completed submission. “Changes waiting to apply” preserves that distinction. Commands sent is not delivery acknowledgement. A borderless caption-sized Apply action appears when ready and not failed, and is disabled during sending; failure presents Retry instead. Quit remains available. Reactive previews use sample typing and do not read keystrokes.
+
+Sidecar HTML/CSS components are isolated browser illustrations of these native patterns, not replacement implementations or pixel-exact macOS control specifications. Generated tonal ramps are panel visualization aids, not additional shipped palette tokens.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** keep every surface on running-blue (#16205a) and separate bands with 1 px rule-blue hairlines.
-- **Do** route every send through the cue lamp: standby-red while in flight, go-green when it lands, amber when something needs the user.
-- **Do** set every number in SF Mono or monospaced digits, right-aligned in a fixed column.
-- **Do** use native macOS controls tinted lift-blue (#6b80e2) instead of custom ones.
-- **Do** mark the current cue with weight, brightness, and the raised-blue fill, not size.
-- **Do** give color surfaces a thin white edge so dark gels stay visible on the shell.
-- **Do** respect Reduce Motion: the standby pulse stops and the lamp holds steady.
+- Do keep the black keyboard and its emitted light as the visual centerpiece.
+- Do reuse native controls and SF Symbols for interface actions.
+- Do distinguish selected palette slots and cards with neutral outlines and tonal fills.
+- Do show only color and speed controls supported by the selected effect.
+- Do distinguish the selected look from completed submissions, and retain approximate-preview, waiting-to-apply, sending, failure, and permission explanations.
+- Do pause preview clocks when hidden, inactive, or Reduce Motion is enabled.
 
 ### Don't:
-- **Don't** use red, green, or amber for anything other than send/attention state.
-- **Don't** add drop shadows to lift surfaces; the only glow is the lamp's light.
-- **Don't** lay out looks as a grey Control Center tile grid.
-- **Don't** show a value as the keyboard's current state when it's only what was last sent.
+- Don't restore the blue Cue Sheet shell, cue lamp, or tracked uppercase section labels.
+- Don't turn keycaps into solid RGB tiles; preserve the dark physical cap surface.
+- Don't describe a preview or successful write as confirmed keyboard state.
+- Don't present the existing palette editor as per-key painting, keyframes, or layers.
+
+Not canonized or repaired: the reported unresponsive alert-based save flow is superseded by inline forms, not retained as a design pattern. Source and the save-form fixture establish the new presentation; installed-app interaction and hardware outcomes remain outside this pass’s verification. The former PRODUCT.md platform/effect-count drift is resolved. Offline fixture appearance is not evidence of hardware correctness or an accessibility review. Keyboard legend glyphs represent the physical key markings, not a general-purpose UI icon system.

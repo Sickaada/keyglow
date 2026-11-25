@@ -1,15 +1,10 @@
-/* KeyGlow: lighting commands over the HID lock-light report.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- */
 #include "keyglow.h"
 #include "transport.h"
 #include "battery.h"
 #include "bat_level_animation.h"
 #include "lpm.h"
+#include "bluetooth.h"
+#include "ckbt51.h"
 
 /* Effect ids shared with the Mac app. Order must match KeyGlow.swift. */
 static const uint8_t effects[] = {
@@ -35,7 +30,33 @@ static const uint8_t effects[] = {
     RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS,
     RGB_MATRIX_SPLASH,
     RGB_MATRIX_SOLID_SPLASH,
+    RGB_MATRIX_CUSTOM_KG_SPLIT,    /* 22: multi-color effects, see rgb_matrix_user.inc */
+    RGB_MATRIX_CUSTOM_KG_GRADIENT, /* 23 */
+    RGB_MATRIX_CUSTOM_KG_FADE,     /* 24 */
+    RGB_MATRIX_CUSTOM_KG_WAVE,     /* 25 */
 };
+
+/* Palette for the multi-color effects. [0] mirrors the normal color; [1], [2] come from the Mac.
+ * Saved in the 32-bit user EEPROM word: h2 | s2<<8 | h3<<16 | (s3>>1)<<24 | three<<31. */
+uint8_t kg_hue[3] = {0, 128, 213};
+uint8_t kg_sat[3] = {255, 255, 255};
+uint8_t kg_count  = 2;
+
+static void palette_save(void) {
+    uint32_t w = kg_hue[1] | (uint32_t)kg_sat[1] << 8 | (uint32_t)kg_hue[2] << 16 |
+                 (uint32_t)(kg_sat[2] >> 1) << 24 | (uint32_t)(kg_count == 3) << 31;
+    eeconfig_update_user(w);
+}
+
+void keyboard_post_init_user(void) {
+    uint32_t w = eeconfig_read_user();
+    if (w == 0) return; /* never set: keep the defaults above */
+    kg_hue[1] = w & 0xFF;
+    kg_sat[1] = (w >> 8) & 0xFF;
+    kg_hue[2] = (w >> 16) & 0xFF;
+    kg_sat[2] = ((w >> 24) & 0x7F) << 1;
+    kg_count  = (w >> 31) ? 3 : 2;
+}
 
 /* Decoder state */
 static uint8_t  last_clock  = 0;
@@ -60,6 +81,8 @@ static void reset_decoder(void) {
     dropping      = false;
 }
 
+static bool bat_report_now = false;
+
 static void run(uint8_t cmd, uint8_t a, uint8_t b, uint8_t c) {
     /* QMK ignores mode/colour changes and skips indicators while lights are off. */
     if (cmd != KG_CMD_POWER && cmd != KG_CMD_SPEED && cmd != KG_CMD_BATTERY && !rgb_matrix_is_enabled()) rgb_matrix_enable();
@@ -83,7 +106,19 @@ static void run(uint8_t cmd, uint8_t a, uint8_t b, uint8_t c) {
             ping_on    = true;
             ping_start = timer_read32();
             break;
+        case KG_CMD_COLOR2:
+            kg_hue[1] = a;
+            kg_sat[1] = b;
+            palette_save();
+            break;
+        case KG_CMD_COLOR3:
+            kg_hue[2] = a;
+            kg_sat[2] = b;
+            kg_count  = c ? 3 : 2;
+            palette_save();
+            break;
         case KG_CMD_BATTERY:
+            bat_report_now = true; /* also refresh the number the Mac sees */
             /* Same guard as Fn+B: the reading is only meaningful on battery, off the cable. */
             if (get_transport() == TRANSPORT_BLUETOOTH && !usb_power_connected())
                 bat_level_animiation_start(battery_get_percentage());
@@ -169,4 +204,44 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
     return true;
+}
+
+/* Battery level for the Mac.
+ * Keychron's newer wireless boards tell their Bluetooth chip the level with command 0x32
+ * (payload: 0x32, percent; no ack), and the chip reports it to the computer.
+ * The K3 Pro's CKBT51 lists the same command but stock firmware never sends it.
+ * We send it on connect, when the level changes, and when the app asks. */
+#define KG_CKBT51_UPDATE_BAT_LVL 0x32
+
+void housekeeping_task_user(void) {
+    static bool     was_connected = false;
+    static uint32_t connected_at  = 0;
+    static uint32_t last_check    = 0;
+    static int16_t  last_sent     = -1;
+
+    bool connected = get_transport() == TRANSPORT_BLUETOOTH && bluetooth_get_state() == BLUETOOTH_CONNECTED;
+    if (!connected) {
+        was_connected = false;
+        last_sent     = -1;
+        return;
+    }
+    if (!was_connected) {
+        was_connected = true;
+        connected_at  = timer_read32();
+        return;
+    }
+    if (timer_elapsed32(connected_at) < 2000) return; /* let the link settle first */
+
+    uint8_t pct = battery_get_percentage();
+    bool    due = bat_report_now || last_sent < 0;
+    if (!due && timer_elapsed32(last_check) > 30000) {
+        last_check = timer_read32();
+        due        = pct != last_sent;
+    }
+    if (!due) return;
+
+    bat_report_now  = false;
+    last_sent       = pct;
+    uint8_t payload[2] = {KG_CKBT51_UPDATE_BAT_LVL, pct};
+    ckbt51_send_cmd(payload, sizeof(payload), false, false);
 }
