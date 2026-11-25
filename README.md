@@ -77,7 +77,7 @@ The firmware is a QMK keymap ([firmware/keymap](firmware/keymap)) plus a two-lin
 
 - Only the K3 Pro ANSI RGB is supported. Other Keychron Pro boards could likely be added the same way (PRs welcome).
 - The app can't read back the keyboard's state. It shows what it last sent.
-- It can't show the battery level: the keyboard doesn't report it over Bluetooth.
+- It can't show the battery percentage on your Mac: the keyboard doesn't report it over Bluetooth. Instead, **Show battery** makes the keyboard light its own battery bar (same as Fn+B). This only works on battery, not while the cable is plugged in.
 - Bluetooth only. Over the cable, use VIA.
 
 ## License

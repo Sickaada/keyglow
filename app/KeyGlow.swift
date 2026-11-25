@@ -129,7 +129,7 @@ final class Keyboard: ObservableObject {
     // frame so the clock ends where it started. Each packet is sent twice; the firmware
     // ignores the repeat by its sequence number.
 
-    enum Cmd: UInt8 { case effect = 1, hsv = 2, speed = 3, power = 4, view = 5, ping = 6 }
+    enum Cmd: UInt8 { case effect = 1, hsv = 2, speed = 3, power = 4, view = 5, ping = 6, battery = 7 }
 
     @Published var sending = false
     @Published var inFlight = 0          // commands queued or being sent

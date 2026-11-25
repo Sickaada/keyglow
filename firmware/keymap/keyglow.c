@@ -7,6 +7,9 @@
  */
 #include "keyglow.h"
 #include "transport.h"
+#include "battery.h"
+#include "bat_level_animation.h"
+#include "lpm.h"
 
 /* Effect ids shared with the Mac app. Order must match KeyGlow.swift. */
 static const uint8_t effects[] = {
@@ -59,7 +62,7 @@ static void reset_decoder(void) {
 
 static void run(uint8_t cmd, uint8_t a, uint8_t b, uint8_t c) {
     /* QMK ignores mode/colour changes and skips indicators while lights are off. */
-    if (cmd != KG_CMD_POWER && cmd != KG_CMD_SPEED && !rgb_matrix_is_enabled()) rgb_matrix_enable();
+    if (cmd != KG_CMD_POWER && cmd != KG_CMD_SPEED && cmd != KG_CMD_BATTERY && !rgb_matrix_is_enabled()) rgb_matrix_enable();
     switch (cmd) {
         case KG_CMD_EFFECT:
             if (a < sizeof(effects)) rgb_matrix_mode(effects[a]);
@@ -79,6 +82,11 @@ static void run(uint8_t cmd, uint8_t a, uint8_t b, uint8_t c) {
         case KG_CMD_PING:
             ping_on    = true;
             ping_start = timer_read32();
+            break;
+        case KG_CMD_BATTERY:
+            /* Same guard as Fn+B: the reading is only meaningful on battery, off the cable. */
+            if (get_transport() == TRANSPORT_BLUETOOTH && !usb_power_connected())
+                bat_level_animiation_start(battery_get_percentage());
             break;
     }
 }

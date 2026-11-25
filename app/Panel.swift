@@ -173,6 +173,8 @@ struct Panel: View {
     @ObservedObject var kb: Keyboard
     @ObservedObject var sheet: CueSheet
     @State private var showDiagnostics = false
+    @State var batteryNote = false
+    @State private var batteryToken = 0
     @State private var signalView = false
     @State private var bits = [false, false, false, false]
     var previewGo = false
@@ -226,6 +228,12 @@ struct Panel: View {
                 Text(deviceLine).font(.subheadline).foregroundStyle(Stage.dim)
             }
             Spacer()
+            Button("Show battery") { askBattery() }
+            .controlSize(.small)
+            .disabled(!ready)
+            .help("Show battery on keyboard (works on battery, not while charging)")
+            .accessibilityLabel("Show battery on keyboard")
+            .padding(.trailing, 6)
             CueLamp(call: call)
         }
         .padding(.horizontal, 16).padding(.vertical, 12)
@@ -259,6 +267,7 @@ struct Panel: View {
                 Spacer(minLength: 0)
             }
             gelChip
+            if batteryNote { batteryBlock }
             if kb.lastSend == .failed {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("The keyboard didn't get that. Wake it with a keypress, then send again.")
@@ -277,6 +286,43 @@ struct Panel: View {
             }
         }
         .padding(16)
+    }
+
+    // Battery: the keyboard draws it, so tell the person where to look.
+    private func askBattery() {
+        kb.send(.battery)
+        batteryNote = true
+        batteryToken += 1
+        let token = batteryToken
+        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+            if token == batteryToken { batteryNote = false }
+        }
+    }
+
+    private var batteryBlock: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(kb.sending ? "Sending to your keyboard…" : "Look at keys 1 to 0 now")
+                    .font(.callout.weight(.semibold))
+                Spacer()
+                Button("Done") { batteryNote = false }
+                    .buttonStyle(.borderless).controlSize(.small)
+            }
+            if kb.sending {
+                Text("Takes about 2 seconds.")
+                    .font(.subheadline).foregroundStyle(Stage.dim)
+            } else if kb.lastSend == .ok {
+                Text("They fill up from the left for about 3 seconds. Each lit key is about 10% charge, so 7 keys means about 70%.")
+                    .font(.subheadline).foregroundStyle(Stage.dim)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("Nothing lit up? Unplug the USB cable. The keyboard only shows battery when it isn't charging.")
+                    .font(.subheadline).foregroundStyle(Stage.attention)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 6).fill(Stage.raised))
     }
 
     private var metaLine: String {
@@ -564,13 +610,13 @@ enum Snapshot {
 
         func board(_ name: String, found: Bool = true, transport: String = "Bluetooth", access: Bool = true,
                    sending: Bool = false, last: Keyboard.SendState = .ok, edit: Bool = false,
-                   go: Bool = false, inFlight: Int = 0, message: String = "") {
+                   go: Bool = false, inFlight: Int = 0, message: String = "", battery: Bool = false) {
             let kb = Keyboard(live: false)
             kb.found = found; kb.transport = transport; kb.accessGranted = access
             kb.sending = sending; kb.lastSend = last; kb.inFlight = inFlight; kb.message = message
             let sheet = CueSheet(store: nil)
             if edit { sheet.live.level = 120; sheet.live.effect = 3 }
-            let view = Panel(kb: kb, sheet: sheet, previewGo: go)
+            let view = Panel(kb: kb, sheet: sheet, batteryNote: battery, previewGo: go)
                 .environment(\.controlActiveState, .key)
             let host = NSHostingView(rootView: view)
             host.frame.size = host.fittingSize
@@ -590,6 +636,8 @@ enum Snapshot {
         board("panel-not-found", found: false, transport: "")
         board("panel-usb", transport: "USB")
         board("panel-go", go: true)
+        board("panel-battery-sending", sending: true, inFlight: 1, battery: true)
+        board("panel-battery", battery: true)
         board("panel-sending-queue", sending: true, inFlight: 3)
         board("panel-failed", last: .failed, message: "Couldn't send (error 0xe00002c0). Is the keyboard connected?")
     }

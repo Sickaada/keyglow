@@ -36,6 +36,7 @@ enum keyglow_cmd {
     KG_CMD_POWER  = 4, /* a = 0 off, 1 on */
     KG_CMD_VIEW   = 5, /* a = 0 hide, 1 show signal view */
     KG_CMD_PING   = 6, /* flashes the whole board white once */
+    KG_CMD_BATTERY = 7, /* plays Keychron's battery-level bar (same as Fn+B) */
 };
 
 void keyglow_frame(uint8_t leds);

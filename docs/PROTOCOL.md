@@ -23,5 +23,6 @@ The host sends HID **LED output reports** (report ID 1 over Bluetooth). Each rep
 | 4   | Power     | a = 0 off, 1 on                        |
 | 5   | Signal view | a = 0 hide, 1 show                   |
 | 6   | Ping      | flashes the whole board white          |
+| 7   | Battery   | plays the Fn+B battery bar (on battery only, not while charging) |
 
 Keychron's Bluetooth code drains its event queue in a loop, so QMK's normal `led_update_user` would only see the last frame of a burst. The patch calls `bluetooth_hid_indicator_user()` on every LED event instead.
